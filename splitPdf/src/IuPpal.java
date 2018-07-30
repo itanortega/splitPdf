@@ -1,9 +1,14 @@
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfCopy;
 import com.lowagie.text.pdf.PdfImportedPage;
 import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -21,9 +26,11 @@ import java.util.logging.Logger;
  */
 public class IuPpal extends javax.swing.JFrame {
 
-    String source = "/Users/itanortegaortega/Documents/pdf/Origen/";
+    String origen = "/Users/itanortegaortega/Documents/pdf/Origen/";
+    String tmp = "/Users/itanortegaortega/Documents/pdf/Tmp/";
     String salida = "/Users/itanortegaortega/Documents/pdf/Salida/";
-    String archivo = "L063116.pdf";
+    String archivo = "prueba.pdf";
+    String hojaCompra = "hoja.pdf";
     /**
      * Creates new form IuPpal
      */
@@ -72,7 +79,8 @@ public class IuPpal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        dividir(source + archivo, salida + archivo, 5);
+        dividir(origen + archivo, tmp + archivo, 5);
+        unirPdf(tmp + archivo, origen + hojaCompra, salida + archivo);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -133,5 +141,48 @@ public class IuPpal extends javax.swing.JFrame {
         } catch (DocumentException ex) {
             Logger.getLogger(IuPpal.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public static boolean unirPdf(String file1, String file2, String salida){
+
+        Document document = new Document();
+        
+        FileInputStream archivo1;
+        try {
+            archivo1 = new FileInputStream(new File(file1));
+            FileInputStream archivo2 = new FileInputStream(new File(file2));        
+            FileOutputStream outputStream = new FileOutputStream(new File(salida));
+
+
+            PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+            document.open();
+            PdfContentByte cb = writer.getDirectContent();
+
+            PdfReader reader1 = new PdfReader(archivo1);
+            for (int i = 1; i <= reader1.getNumberOfPages(); i++) {
+                document.newPage();
+                PdfImportedPage page = writer.getImportedPage(reader1, i);
+                cb.addTemplate(page, 0, 0);
+            }
+
+            PdfReader reader2 = new PdfReader(archivo2);
+            for (int i = 1; i <= reader2.getNumberOfPages(); i++) {
+                document.newPage();
+                PdfImportedPage page = writer.getImportedPage(reader2, i);
+                cb.addTemplate(page, 0, 0);
+            }
+
+            outputStream.flush();
+            document.close();
+            outputStream.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(IuPpal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (DocumentException ex) {
+            Logger.getLogger(IuPpal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(IuPpal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return true;
     }
 }
