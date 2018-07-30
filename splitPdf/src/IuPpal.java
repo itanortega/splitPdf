@@ -30,7 +30,8 @@ public class IuPpal extends javax.swing.JFrame {
     String tmp = "/Users/itanortegaortega/Documents/pdf/Tmp/";
     String salida = "/Users/itanortegaortega/Documents/pdf/Salida/";
     String archivo = "prueba.pdf";
-    String hojaCompra = "hoja.pdf";
+    String hojaCompra = "hojaCompra.pdf";
+    int nHojas = 1;
     /**
      * Creates new form IuPpal
      */
@@ -47,41 +48,71 @@ public class IuPpal extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        Btn_Proceder = new javax.swing.JButton();
+        Spn_Hojas = new javax.swing.JSpinner();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("jButton1");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        Btn_Proceder.setText("Proceder");
+        Btn_Proceder.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                Btn_ProcederActionPerformed(evt);
             }
         });
+
+        Spn_Hojas.setModel(new javax.swing.SpinnerNumberModel(5, 1, 50, 1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(166, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addGap(137, 137, 137))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addComponent(Spn_Hojas, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(Btn_Proceder)
+                .addContainerGap(129, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(98, 98, 98)
-                .addComponent(jButton1)
-                .addContainerGap(173, Short.MAX_VALUE))
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Btn_Proceder)
+                    .addComponent(Spn_Hojas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(299, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        dividir(origen + archivo, tmp + archivo, 5);
-        unirPdf(tmp + archivo, origen + hojaCompra, salida + archivo);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void Btn_ProcederActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Btn_ProcederActionPerformed
+        String sDirectorio = origen;
+        File f = new File(sDirectorio);
+        String nombre = "";
+        String rutaArchivoOrigen = "";
+        String rutaArchivoTmp = "";
+        String rutaArchivoSalida = "";  
+        String rutaArchivoHoja = ""; 
+        nHojas = Integer.parseInt(Spn_Hojas.getValue().toString());
+        
+        File[] archivos = f.listFiles();
+        for(int i=0; i<archivos.length; i++){
+            nombre = archivos[i].getName();
+            rutaArchivoOrigen = origen + nombre;
+            rutaArchivoTmp = tmp + nombre;
+            rutaArchivoSalida = salida + nombre;
+            rutaArchivoHoja = origen + hojaCompra;
+            
+            if(!nombre.equals(".DS_Store") && !nombre.equals(hojaCompra)){
+                System.out.println(rutaArchivoTmp);
+                dividir(rutaArchivoOrigen, rutaArchivoTmp, nHojas);
+                unirPdf(rutaArchivoTmp, rutaArchivoHoja, rutaArchivoSalida);
+                System.out.println(rutaArchivoTmp + "__________________________");
+            }
+        }
+        System.out.println("Listo!!!");
+    }//GEN-LAST:event_Btn_ProcederActionPerformed
 
     /**
      * @param args the command line arguments
@@ -119,7 +150,8 @@ public class IuPpal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton Btn_Proceder;
+    private javax.swing.JSpinner Spn_Hojas;
     // End of variables declaration//GEN-END:variables
 
     private void dividir(String origen, String destino, int nPaginas) {
